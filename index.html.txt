@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veo³ Prompt Generator (jpXCode)</title>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                inter: ['Inter', 'sans-serif'],
+              },
+              colors: {
+                'slate-100': '#f1f5f9',
+                'slate-300': '#cbd5e1',
+                'slate-400': '#94a3b8',
+                'slate-500': '#64748b',
+                'slate-700': '#334155',
+                'slate-800': '#1e293b',
+                'slate-900': '#0f172a',
+              }
+            }
+          }
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // jpXCode — Veo³ Prompt Generator (React, Tailwind)
+        // Neumorphic 3D UI, cinematic vibes, RGB outline + full animation
+        // Drop-in App component for Vite + React + Tailwind projects.
+
+        // Isi kode komponen React Anda di sini.
+        function JPXCode() {
+          const { useState, useEffect } = React;
+          
+          const OPTIONS = {
+            subject: [
+              "-- Pilih subjek --",
+              "Seorang pejuang cyberpunk",
+              "Kereta uap antik berjalan di pegunungan",
+              "Desa nelayan saat matahari terbenam",
+              "Kota futuristik neon di malam hari",
+              "Robot humanoid sedang merenung",
+              "Gadis dengan kostum tradisional dan hologram",
+              "Burung phoenix bangkit dari abu",
+              "Pesawat luar angkasa mendarat di pulau tropis",
+              "Pasangan menari di tengah hujan",
+              "Pemandangan sawah berterasering dengan kabut pagi",
+            ],
+            scene: [
+              "-- Pilih scene --",
+              "Kota metropolis (neon, jalan basah)",
+              "Stasiun kereta tua",
+              "Pinggir pantai saat senja",
+              "Hutan bambu berkabut",
+              "Goa bercahaya bioluminescent",
+              "Jalan desa dengan gerobak dan lampu minyak",
+              "Puncak gunung dengan awan di bawah",
+              "Interior kapal luar angkasa (bridge)",
+              "Lapangan hijau luas dengan matahari terbit",
+              "Pasar tradisional yang ramai",
+            ],
+            camera: [
+              "-- Pilih kamera --",
+              "Canon EOS R5 (35mm sensor)",
+              "RED Komodo (digital cinema)",
+              "Arri Alexa Mini (cinema)",
+              "Blackmagic Pocket Cinema 6K",
+              "Smartphone flagship (ultra wide)",
+              "Drone 6k cinematic",
+              "Steadicam / gimbal shot",
+              "Handheld documentary style",
+              "360° spherical camera",
+              "Dolly + slider cinematic",
+            ],
+            lens: [
+              "-- Pilih lensa --",
+              "50mm f/1.4 (close-up, cinematic bokeh)",
+              "35mm f/2 (environment portrait)",
+              "85mm f/1.8 (tight portrait)",
+              "24mm wide (landscape/establishing)",
+              "14mm ultra wide (dramatic)",
+              "70-200mm telephoto (compressed)",
+              "Macro 100mm (detail)",
+              "Fisheye (artistic)",
+              "Prime vintage glass (filmic)",
+              "Soft focus lens (dreamy)",
+            ],
+            lighting: [
+              "-- Pilih pencahayaan --",
+              "Golden hour warm backlight",
+              "Neon high contrast (rim light)",
+              "Soft overcast (diffused)",
+              "Rembrandt cinematic key",
+              "Low-key dramatic chiaroscuro",
+              "Bioluminescent subtle glow",
+              "Moonlit cool blue",
+              "Practical lights in-frame (lamp, lantern)",
+              "High key bright commercial",
+              "Volumetric light beams / god rays",
+            ],
+            mood: [
+              "-- Pilih suasana --",
+              "Misterius dan tegang",
+              "Hangat dan nostalgi",
+              "Heroic / epik",
+              "Melankolis / reflektif",
+              "Gembira / optimis",
+              "Surreal / dreamlike",
+              "Menyeramkan / horror subtle",
+              "Romantis lembut",
+              "Cinematic documentary",
+              "Energetic action",
+            ],
+            movement: [
+              "-- Pilih pergerakan kamera --",
+              "Slow dolly in toward subject",
+              "Tracking shot beside moving subject",
+              "Crane / drone reveal from above",
+              "Slight handheld push-in",
+              "Whip pan transition",
+              "Circle around subject 360°",
+              "Timelapse / hyperlapse forward",
+              "Rack focus between planes",
+              "Static wide establishing shot",
+              "Smooth gimbal follow",
+            ],
+            style: [
+              "-- Pilih gaya --",
+              "Photorealistic cinematic",
+              "Movie poster composition",
+              "8-bit retro / pixel art",
+              "Anime high detail",
+              "Noir vintage film grain",
+              "Painterly oil-on-canvas",
+              "Studio portrait with rim light",
+              "Isometric stylized",
+              "Hyperreal HDR 8K",
+              "Minimalist graphic",
+            ],
+            quality: [
+              "-- Pilih resolusi --",
+              "4K UHD, 60fps, ultra-detailed",
+              "8K, filmic, photoreal",
+              "1080p, 24fps, cinematic grain",
+              "2.7K drone quality",
+              "720p stylized (speed/size)",
+              "4K HDR, wide color gamut",
+              "High frame-rate 120fps slow-motion",
+              "Film scanned 35mm look",
+            ],
+            audio: [
+              "-- Pilih audio / musik --",
+              "Ambient pad, slow tempo",
+              "Orchestral swell, epic",
+              "Traditional folk instruments",
+              "Electronic synthwave retro",
+              "Natural foley (waves, footsteps)",
+              "Action percussive rhythmic",
+              "Silence with distant hum",
+              "Diegetic music (in-world)",
+            ],
+            post: [
+              "-- Pilih post production --",
+              "Color grade teal & orange",
+              "Film grain + subtle vignette",
+              "Lens flares tasteful",
+              "Motion blur + speed ramp",
+              "Chromatic aberration slight",
+              "Depth of field heavy bokeh",
+              "Glitch digital artifacts",
+              "Soft diffusion + halation",
+            ],
+          };
+
+          const [state, setState] = useState({
+            subject: OPTIONS.subject[0],
+            scene: OPTIONS.scene[0],
+            camera: OPTIONS.camera[0],
+            lens: OPTIONS.lens[0],
+            lighting: OPTIONS.lighting[0],
+            mood: OPTIONS.mood[0],
+            movement: OPTIONS.movement[0],
+            style: OPTIONS.style[0],
+            quality: OPTIONS.quality[0],
+            audio: OPTIONS.audio[0],
+            post: OPTIONS.post[0],
+            notes: "",
+          });
+
+          const set = (k, v) => setState((s) => ({ ...s, [k]: v }));
+
+          function buildPrompt(s) {
+            if (!s.subject || s.subject.startsWith("-- Pilih")) return "Pilih minimal Subjek untuk melihat preview prompt.";
+            const parts = [];
+            parts.push(s.subject);
+            if (s.scene && !s.scene.startsWith("-- Pilih")) parts.push(`Location: ${s.scene}.`);
+            if (s.camera && !s.camera.startsWith("-- Pilih")) parts.push(`Camera: ${s.camera},`);
+            if (s.lens && !s.lens.startsWith("-- Pilih")) parts.push(`${s.lens}.`);
+            if (s.movement && !s.movement.startsWith("-- Pilih")) parts.push(`Motion: ${s.movement}.`);
+            if (s.lighting && !s.lighting.startsWith("-- Pilih")) parts.push(`Lighting: ${s.lighting}.`);
+            if (s.mood && !s.mood.startsWith("-- Pilih")) parts.push(`Mood: ${s.mood}.`);
+            if (s.style && !s.style.startsWith("-- Pilih")) parts.push(`Style: ${s.style}.`);
+            if (s.quality && !s.quality.startsWith("-- Pilih")) parts.push(`Quality: ${s.quality}.`);
+            if (s.audio && !s.audio.startsWith("-- Pilih")) parts.push(`Audio: ${s.audio}.`);
+            if (s.post && !s.post.startsWith("-- Pilih")) parts.push(`Post: ${s.post}.`);
+            if (s.notes) parts.push(`Notes: ${s.notes}`);
+            parts.push("Modifiers: ultra-detailed, cinematic lighting, realistic motion blur when appropriate, natural skin textures, filmic color grading, clean composition, high dynamic range.");
+            return parts.join(" ");
+          }
+
+          const [promptText, setPromptText] = useState(buildPrompt(state));
+          useEffect(() => setPromptText(buildPrompt(state)), [state]);
+
+          function exportJSON() {
+            const out = { ...state, generated_at: new Date().toISOString(), version: "veo3-dropdown-universal-v1", prompt_text: buildPrompt(state) };
+            return JSON.stringify(out, null, 2);
+          }
+
+          function reset() {
+            setState({
+              subject: OPTIONS.subject[0],
+              scene: OPTIONS.scene[0],
+              camera: OPTIONS.camera[0],
+              lens: OPTIONS.lens[0],
+              lighting: OPTIONS.lighting[0],
+              mood: OPTIONS.mood[0],
+              movement: OPTIONS.movement[0],
+              style: OPTIONS.style[0],
+              quality: OPTIONS.quality[0],
+              audio: OPTIONS.audio[0],
+              post: OPTIONS.post[0],
+              notes: "",
+            });
+          }
+
+          return (
+            <div className="min-h-screen bg-gradient-to-b from-[#06070a] via-[#0b1622] to-[#08101a] text-slate-100 p-6 font-inter">
+              <style>{`
+                /* Neumorphic + 3D card styles + animated RGB outline */
+                .jpx-card { 
+                  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.14));
+                  box-shadow: 12px 12px 24px rgba(2,6,23,0.7), -8px -8px 18px rgba(255,255,255,0.02) inset;
+                  border-radius: 18px;
+                  border: 1px solid rgba(255,255,255,0.03);
+                  transform-style: preserve-3d;
+                  transition: transform 0.45s cubic-bezier(.2,.9,.2,1), box-shadow 0.45s;
+                }
+
+                .jpx-card:hover { transform: translateY(-8px) rotateX(4deg) ; box-shadow: 18px 22px 40px rgba(2,6,23,0.8); }
+
+                .rgb-outline { position: relative; overflow: visible; }
+                .rgb-outline:before, .rgb-outline:after {
+                  content: '';
+                  position: absolute; inset: -2px; z-index: -1; border-radius: 20px; pointer-events:none;
+                  background: linear-gradient(90deg, rgba(255,0,100,0.12), rgba(0,150,255,0.12), rgba(0,255,150,0.12));
+                  filter: blur(10px);
+                  opacity: 0.9;
+                  mix-blend-mode: screen;
+                  animation: rgbshift 4s linear infinite;
+                }
+                .rgb-outline:after { filter: blur(30px); animation-direction: reverse; }
+
+                @keyframes rgbshift { 0%{transform:translateX(-6px) rotate(0);}50%{transform:translateX(6px) rotate(1deg);}100%{transform:translateX(-6px) rotate(0);} }
+
+                .floating { animation: floaty 6s ease-in-out infinite; }
+                @keyframes floaty { 0%{transform:translateY(0) }50%{transform:translateY(-8px)}100%{transform:translateY(0)} }
+
+                .select-neu { 
+                  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.12)); 
+                  border-radius: 12px; 
+                  padding: .45rem .6rem; 
+                  border: 1px solid rgba(255,255,255,0.03); 
+                  box-shadow: 6px 6px 14px rgba(2,6,23,0.6), -4px -4px 10px rgba(255,255,255,0.02) inset; 
+                  transition: transform .18s; 
+                  /* Fix warna text di dropdown */
+                  color: #f1f5f9; 
+                }
+                .select-neu:focus { transform: translateY(-3px); outline: none; box-shadow: 12px 12px 20px rgba(2,6,23,0.7); }
+
+                .glow-btn { 
+                  background: linear-gradient(90deg, rgba(6,182,212,0.12), rgba(140,60,255,0.12)); 
+                  border: 1px solid rgba(255,255,255,0.04); 
+                  padding:.5rem .9rem; 
+                  border-radius:12px; 
+                  transition: transform .2s, box-shadow .2s;
+                }
+                .glow-btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 30px rgba(6,182,212,0.08); }
+
+                .neon-title { font-weight:800; font-size:1.25rem; letter-spacing:0.6px; text-transform: none; }
+                .neon-title span { display:inline-block; padding:6px 10px; border-radius:10px; background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0)); }
+
+                /* dropdown arrow animation */
+                .select-neu option[disabled] { color: #9aa8bf; }
+
+                /* small responsive tweaks */
+                @media (max-width: 640px) {
+                  .jpx-card { border-radius: 14px; }
+                }
+              `}</style>
+
+              <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-2 items-start">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h1 className="neon-title text-white"><span className="text-xl">jpXCode</span> <span className="text-sm text-slate-400 ml-2">— Veo³ Prompt Generator</span></h1>
+                      <p className="text-sm text-slate-400 mt-1">Neumorphic 3D UI • Cinematic vibes • Animated RGB outline</p>
+                    </div>
+                    <div className="text-xs text-slate-400">Universal • Dropdown • Mobile-ready</div>
+                  </div>
+
+                  <div className="jpx-card rgb-outline p-5 floating">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs text-slate-300 mb-2">1) Subject</label>
+                        <select className="w-full select-neu text-slate-100" value={state.subject} onChange={(e) => set('subject', e.target.value)}>
+                          {OPTIONS.subject.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">2) Scene / Lokasi</label>
+                        <select className="w-full select-neu text-slate-100" value={state.scene} onChange={(e) => set('scene', e.target.value)}>
+                          {OPTIONS.scene.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">3) Camera Type</label>
+                        <select className="w-full select-neu text-slate-100" value={state.camera} onChange={(e) => set('camera', e.target.value)}>
+                          {OPTIONS.camera.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">4) Lens</label>
+                        <select className="w-full select-neu text-slate-100" value={state.lens} onChange={(e) => set('lens', e.target.value)}>
+                          {OPTIONS.lens.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">5) Lighting</label>
+                        <select className="w-full select-neu text-slate-100" value={state.lighting} onChange={(e) => set('lighting', e.target.value)}>
+                          {OPTIONS.lighting.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">6) Mood</label>
+                        <select className="w-full select-neu text-slate-100" value={state.mood} onChange={(e) => set('mood', e.target.value)}>
+                          {OPTIONS.mood.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">7) Movement</label>
+                        <select className="w-full select-neu text-slate-100" value={state.movement} onChange={(e) => set('movement', e.target.value)}>
+                          {OPTIONS.movement.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">8) Style</label>
+                        <select className="w-full select-neu text-slate-100" value={state.style} onChange={(e) => set('style', e.target.value)}>
+                          {OPTIONS.style.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">9) Quality</label>
+                        <select className="w-full select-neu text-slate-100" value={state.quality} onChange={(e) => set('quality', e.target.value)}>
+                          {OPTIONS.quality.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">10) Audio</label>
+                        <select className="w-full select-neu text-slate-100" value={state.audio} onChange={(e) => set('audio', e.target.value)}>
+                          {OPTIONS.audio.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-slate-300 mb-2">11) Post Production</label>
+                        <select className="w-full select-neu text-slate-100" value={state.post} onChange={(e) => set('post', e.target.value)}>
+                          {OPTIONS.post.map((o) => (<option key={o}>{o}</option>))}
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs text-slate-300 mb-2">12) Notes (opsional)</label>
+                        <textarea className="w-full select-neu text-slate-100 min-h-[80px]" value={state.notes} onChange={(e) => set('notes', e.target.value)} placeholder="Tambahkan weighting, negative prompt, atau instruksi lanjutan"></textarea>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex gap-3 flex-wrap">
+                      <button className="glow-btn text-slate-50 font-semibold" onClick={() => navigator.clipboard.writeText(promptText).then(()=>alert('Prompt disalin ke clipboard'))}>Salin Prompt</button>
+                      <button className="glow-btn text-slate-50" onClick={() => navigator.clipboard.writeText(exportJSON()).then(()=>alert('JSON disalin ke clipboard'))}>Salin JSON</button>
+                      <button className="glow-btn text-slate-50" onClick={() => {
+                        const blob = new Blob([exportJSON()], {type:'application/json'});
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a'); a.href = url; a.download = 'veo3-prompt.json'; a.click(); URL.revokeObjectURL(url);
+                      }}>Download JSON</button>
+
+                      <button className="ml-auto glow-btn text-slate-50" onClick={reset}>Reset</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="jpx-card rgb-outline p-4 floating">
+                    <h2 className="text-sm font-medium text-slate-100">Prompt Preview</h2>
+                    <div className="mt-3 p-3 bg-black/60 rounded text-sm leading-relaxed whitespace-pre-wrap max-h-[360px] overflow-auto">{promptText}</div>
+
+                    <div className="mt-3 flex gap-2">
+                      <button className="px-3 py-2 rounded bg-slate-700/50 text-xs" onClick={() => {
+                        const w = window.open(); w.document.body.innerHTML = `<pre style="white-space:pre-wrap; color:white; background:black; padding:10px">${promptText}</pre>`;
+                      }}>Open Preview</button>
+
+                      <button className="px-3 py-2 rounded bg-slate-700/50 text-xs" onClick={() => alert('Tip: gunakan Notes untuk menambahkan ::weight atau -negative terms')}>Tips</button>
+                    </div>
+                  </div>
+
+                  <div className="jpx-card rgb-outline p-4 floating">
+                    <h2 className="text-sm font-medium text-slate-100">JSON Preview</h2>
+                    <pre className="mt-2 p-3 bg-black/60 rounded text-xs max-h-[300px] overflow-auto">{exportJSON()}</pre>
+                    <div className="mt-2 text-xs text-slate-400">Generated at: {new Date().toLocaleString()}</div>
+                  </div>
+
+                  <div className="text-xs text-slate-500">Info: Karena menggunakan CDN, proses loading mungkin membutuhkan waktu 1-2 detik.</div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // Render komponen ke DOM
+        ReactDOM.createRoot(document.getElementById('root')).render(<JPXCode />);
+    </script>
+</body>
+</html>
